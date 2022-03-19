@@ -1,0 +1,1 @@
+{"uuid":"16b71491-b790-42c1-a8a3-81e5b9971fd1","name":"FINAL_FRAMEWORK_TEST","children":["e4b245b5-b684-4154-ba5f-bc4d30bc3de2"],"befores":[{"name":"ExecutingUrlHeaderBeforeEveryTest","status":"passed","stage":"finished","description":"","steps":[],"attachments":[],"parameters":[],"start":1647691675328,"stop":1647691675755}],"afters":[],"start":1647691675306,"stop":1647691678061}
