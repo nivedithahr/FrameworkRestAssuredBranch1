@@ -120,8 +120,7 @@ public class FINAL_FRAMEWORK_TEST {
     //6. NEW REGISTER AND NEW LOGIN IS SUCCESSFUL AND CAN FIND NEW USER IN THE WORKSPACE
     @Test(dataProvider = "workspace")
     public void CreatingMultipleUserByPOJOA_AndValidating(String name, String type, String description) {
-        Workspace workspace = new Workspace(name, type, description);
-        WorkspaceRoot workspaceRoot = new WorkspaceRoot(workspace);
+        Workspace workspace = Workspace.builder().name(name).type(type).description(description).build();
 
 
         given(requestSpecification).
@@ -146,22 +145,33 @@ public class FINAL_FRAMEWORK_TEST {
         };
     }
     //6. LOGIN VALIDATION NEW USER
+    //REST UTIL
     @Test
-    public void successful() {
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        JSONObject request = new JSONObject(map);
-
-        System.out.println(request.toJSONString());
+    public void keyValueValidate() {
 
 
-        given(requestSpecification).
-                header("Content-Type", "application/json").
-                contentType(ContentType.JSON).accept(ContentType.JSON).
-                body(request.toJSONString()).
+        String url = "/workspaces/b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
+        String key = "id";
+        String value = "b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
+        RestUtils restUtils = new RestUtils();
 
-                when().put("/workspaces/e4652650-1793-44da-bf01-be72c8028751").
-                then().statusCode(200).
-                log().all();
+        Map<String,String > map = new HashMap<String, String>();
+        map.put(key,value);
+        Response response = restUtils.getWithParams(url,map);
+        response.prettyPrint();
+    }
+    @Test
+    public void IdValue()
+    {
+        String url = "https://reqres.in/api/users";
+        String key = "id";
+        int value = 10;
+        RestUtils restUtils = new RestUtils();
+
+        Map<String,Integer> map = new HashMap<String, Integer>();
+        map.put(key,value);
+        Response response = restUtils.getId(url,map);
+        //system.out.println(response.body().asString());
+        response.prettyPrint();
     }
 }
