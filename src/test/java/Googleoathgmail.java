@@ -7,13 +7,12 @@ import io.restassured.specification.ResponseSpecification;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 
 import static io.restassured.RestAssured.given;
 
-public class GOOGLE_OAUTH_GMAIL {
+public class Googleoathgmail {
     RequestSpecification requestSpecification;
     ResponseSpecification responseSpecification;
     String access_token = "ya29.A0ARrdaM87UU44U_2PEezJpLxg0Ba7UPqRtJ0NmhxewmYiPI_znnXOPyETuAM7zUxpxMESC6H1bmhe3t9zGFrVJ4Z-jM34RewKwm629VlN-5HANWSlTyfYlS84Hm3jJtCwEqOyOPLZHbWkEggbGc84XjmJX-yIPg";

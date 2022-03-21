@@ -10,10 +10,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.gson.Gson;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class Workspace {
@@ -26,9 +29,6 @@ public class Workspace {
     private String description;
 
 
-    public Workspace(String name, String type, String description){
-        this.name = name;
-        this.type = type;
-        this.description = description;
-    }
+
 }
+

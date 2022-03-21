@@ -1,15 +1,12 @@
+import com.automation.restutils.RestUtils;
 import com.workspacePayload.pojo.Workspace;
-import com.workspacePayload.pojo.WorkspaceRoot;
 import io.restassured.config.LogConfig;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import org.json.simple.JSONObject;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +15,7 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.*;
-public class FINAL_FRAMEWORK_TEST {
+public class Finalframewok {
     RequestSpecification requestSpecification;
     @BeforeClass
     public void ExecutingUrlHeaderBeforeEveryTest()
@@ -30,24 +27,18 @@ public class FINAL_FRAMEWORK_TEST {
     //1. FETCH THE DATA BY BDD FORMAt
     @Test
     public void FetchUserWorkspaceList(){
-        given(requestSpecification).
-
-                when().
-                get("/workspaces").
-
-                then().
-                log().all().
-                assertThat().statusCode(200);
+        String url = "/workspaces";
+        RestUtils restUtils = new RestUtils();
+        Response response = restUtils.get(url);
+        response.prettyPrint();
     }
     //2. USING ASSERT_THAT TO CHECK RESPONSE BY NON BDD
     @Test
     public void FetchingByNonBDDFormat()
     {
-        Response response = requestSpecification.get("/workspaces").
-                then().
-                log().all().
-                extract().
-                response();
+        String url = "/workspaces";
+        RestUtils restUtils = new RestUtils();
+        Response response = restUtils.get(url);
 
         assertThat(response.statusCode(), is(equalTo(200)));
     }
@@ -83,58 +74,47 @@ public class FINAL_FRAMEWORK_TEST {
     //3. VALIDATE LOGIN REQUEST AND RESPONSE
     @Test
     public void ValidatingLoginRequestAndResponse(){
+        String url= "/workspaces";
+        RestUtils restUtils = new RestUtils();
         given(requestSpecification).
 
                 config(config.logConfig(LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails())).
-                config(config.logConfig(LogConfig.logConfig().blacklistHeader("X-Api-Key"))).
-                log().all().
-
-                when().
-                get("/workspaces").
-
-                then().
-                log().body().
-                assertThat().statusCode(200);
+                config(config.logConfig(LogConfig.logConfig().blacklistHeader("X-Api-Key")));
+        Response response = restUtils.get(url);
+        response.prettyPrint();
 
     }
     //4. CREATED JSON FILE IN RESOURCES. FETCHING AND VALIDATING DATA FROM CREATED JSON FILE
     //USING REGEX HERE FOR PATTERN VALIDATION
     @Test
     public void FetchingValidatingByJsonFile(){
-        File file = new File("src/main/resources/workspace.json");
+       // File file = new File("src/main/resources/workspace.json");
+        String url = "/workspaces/b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
+        RestUtils restUtils = new RestUtils();
+        String key = "id";
+        String value = "b7583ee8-e9a0-4ed1-bbb5-b7abef5155";
 
-        given(requestSpecification).
+        Map<String,String> map = new HashMap<String, String>();
+        map.put(key,value);
 
-                body(file).
-                log().all().
+        Response response = restUtils.put(url,map);
+        response.prettyPrint();
 
-                when().put("/workspaces/b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb" ).
-
-                then().
-                log().all().
-                assertThat().
-                body("workspace.name", equalTo("SecFirstWorkspace"),
-                        "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));//USING REGEX TO VALIDATE ID PATTERN
+//        assertThat().body("workspace.name", equalTo("SecFirstWorkspace"),
+//                        "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));//USING REGEX TO VALIDATE ID PATTERN
     }
     //5. MULTIPLE USER CREATED BY POJO AND THEN VALIDATED FOR THEIR PRESENCE
     //6. NEW REGISTER AND NEW LOGIN IS SUCCESSFUL AND CAN FIND NEW USER IN THE WORKSPACE
     @Test(dataProvider = "workspace")
     public void CreatingMultipleUserByPOJOA_AndValidating(String name, String type, String description) {
-        Workspace workspace = new Workspace(name, type, description);
-        WorkspaceRoot workspaceRoot = new WorkspaceRoot(workspace);
-
+        //RestUtils restUtils = new RestUtils();
+        String url = "/workspaces";
+        Workspace workspace = Workspace.builder().name(name).type(type).description(description).build();
 
         given(requestSpecification).
-                body(workspaceRoot).
+                body(workspace).
                 log().all().
-
-                when().
-                post("/workspaces").
-
-
-                then().
-                log().all().
-                assertThat();
+                post(url);
     }
 
     @DataProvider(name = "workspace")
@@ -146,22 +126,33 @@ public class FINAL_FRAMEWORK_TEST {
         };
     }
     //6. LOGIN VALIDATION NEW USER
+    //REST UTIL
     @Test
-    public void successful() {
-        Map<String, Object> map = new HashMap<String, Object>();
-
-        JSONObject request = new JSONObject(map);
-
-        System.out.println(request.toJSONString());
+    public void keyValueValidate() {
 
 
-        given(requestSpecification).
-                header("Content-Type", "application/json").
-                contentType(ContentType.JSON).accept(ContentType.JSON).
-                body(request.toJSONString()).
+        String url = "/workspaces/b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
+        String key = "id";
+        String value = "b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
+        RestUtils restUtils = new RestUtils();
 
-                when().put("/workspaces/e4652650-1793-44da-bf01-be72c8028751").
-                then().statusCode(200).
-                log().all();
+        Map<String,String > map = new HashMap<String, String>();
+        map.put(key,value);
+        Response response = restUtils.getWithParams(url,map);
+        response.prettyPrint();
+    }
+    @Test
+    public void IdValue()
+    {
+        String url = "https://reqres.in/api/users";
+        String key = "id";
+        int value = 10;
+        RestUtils restUtils = new RestUtils();
+
+        Map<String,Integer> map = new HashMap<String, Integer>();
+        map.put(key,value);
+        Response response = restUtils.getId(url,map);
+        //system.out.println(response.body().asString());
+        response.prettyPrint();
     }
 }
