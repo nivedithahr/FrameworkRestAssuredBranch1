@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class Workspace {
@@ -24,11 +25,4 @@ public class Workspace {
     private String type;
     @JsonProperty("description")
     private String description;
-
-
-    public Workspace(String name, String type, String description){
-        this.name = name;
-        this.type = type;
-        this.description = description;
-    }
 }
