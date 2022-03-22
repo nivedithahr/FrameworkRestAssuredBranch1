@@ -1,8 +1,15 @@
 import com.automation.restutils.RestUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.workspacePayload.pojo.Workspace;
 import io.restassured.config.LogConfig;
+import io.restassured.http.ContentType;
+import io.restassured.mapper.ObjectMapperDeserializationContext;
+import io.restassured.mapper.ObjectMapperSerializationContext;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.json.simple.JSONObject;
+import org.openqa.selenium.json.Json;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -18,7 +25,7 @@ import static org.hamcrest.Matchers.*;
 public class Finalframewok {
     RequestSpecification requestSpecification;
     @BeforeClass
-    public void ExecutingUrlHeaderBeforeEveryTest()
+    public void executingTest()
     {
         requestSpecification = given().
                 baseUri("https://api.postman.com").
@@ -26,25 +33,26 @@ public class Finalframewok {
     }
     //1. FETCH THE DATA BY BDD FORMAt
     @Test
-    public void FetchUserWorkspaceList(){
+    public void workspaceList(){
         String url = "/workspaces";
         RestUtils restUtils = new RestUtils();
         Response response = restUtils.get(url);
+        response.asString();
         response.prettyPrint();
     }
     //2. USING ASSERT_THAT TO CHECK RESPONSE BY NON BDD
     @Test
-    public void FetchingByNonBDDFormat()
-    {
+    public void fetchingData() throws JsonProcessingException {
         String url = "/workspaces";
         RestUtils restUtils = new RestUtils();
         Response response = restUtils.get(url);
+        response.asString();
 
         assertThat(response.statusCode(), is(equalTo(200)));
     }
     //2.VALIDATE THE DATA USING HAMCREST
     @Test
-    public void UseHamcrestForValidatingData(){
+    public void usingHamcrest(){
         given(requestSpecification).
 
                 when().
@@ -73,7 +81,7 @@ public class Finalframewok {
     }
     //3. VALIDATE LOGIN REQUEST AND RESPONSE
     @Test
-    public void ValidatingLoginRequestAndResponse(){
+    public void validatingFail(){
         String url= "/workspaces";
         RestUtils restUtils = new RestUtils();
         given(requestSpecification).
@@ -81,40 +89,52 @@ public class Finalframewok {
                 config(config.logConfig(LogConfig.logConfig().enableLoggingOfRequestAndResponseIfValidationFails())).
                 config(config.logConfig(LogConfig.logConfig().blacklistHeader("X-Api-Key")));
         Response response = restUtils.get(url);
+        response.asString();
         response.prettyPrint();
 
     }
     //4. CREATED JSON FILE IN RESOURCES. FETCHING AND VALIDATING DATA FROM CREATED JSON FILE
     //USING REGEX HERE FOR PATTERN VALIDATION
     @Test
-    public void FetchingValidatingByJsonFile(){
-       // File file = new File("src/main/resources/workspace.json");
+    public void fetchingJson() throws JsonProcessingException {
+        // File file = new File("src/main/resources/workspace.json");
         String url = "/workspaces/b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
         RestUtils restUtils = new RestUtils();
         String key = "id";
         String value = "b7583ee8-e9a0-4ed1-bbb5-b7abef5155";
 
-        Map<String,String> map = new HashMap<String, String>();
-        map.put(key,value);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put(key, value);
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
 
-        Response response = restUtils.put(url,map);
+        Response response = restUtils.put(url, map);
         response.prettyPrint();
+        response.asString();
+    }
 
 //        assertThat().body("workspace.name", equalTo("SecFirstWorkspace"),
 //                        "workspace.id", matchesPattern("^[a-z0-9-]{36}$"));//USING REGEX TO VALIDATE ID PATTERN
-    }
+
     //5. MULTIPLE USER CREATED BY POJO AND THEN VALIDATED FOR THEIR PRESENCE
     //6. NEW REGISTER AND NEW LOGIN IS SUCCESSFUL AND CAN FIND NEW USER IN THE WORKSPACE
     @Test(dataProvider = "workspace")
-    public void CreatingMultipleUserByPOJOA_AndValidating(String name, String type, String description) {
+    public void creatingMultiple(String name, String type, String description) throws JsonProcessingException {
         //RestUtils restUtils = new RestUtils();
         String url = "/workspaces";
         Workspace workspace = Workspace.builder().name(name).type(type).description(description).build();
 
+
+//        String requestBody = ObjectMapper.writeValueAsString(workspace);
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(workspace));
+
         given(requestSpecification).
                 body(workspace).
                 log().all().
-                post(url);
+                post(url).asString();
+
+
     }
 
     @DataProvider(name = "workspace")
@@ -128,7 +148,7 @@ public class Finalframewok {
     //6. LOGIN VALIDATION NEW USER
     //REST UTIL
     @Test
-    public void keyValueValidate() {
+    public void keyValidate() throws JsonProcessingException {
 
 
         String url = "/workspaces/b7583ee8-e9a0-4ed1-bbb5-b7abef5155cb";
@@ -138,12 +158,14 @@ public class Finalframewok {
 
         Map<String,String > map = new HashMap<String, String>();
         map.put(key,value);
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
         Response response = restUtils.getWithParams(url,map);
         response.prettyPrint();
+        response.asString();
     }
     @Test
-    public void IdValue()
-    {
+    public void idValue() throws JsonProcessingException {
         String url = "https://reqres.in/api/users";
         String key = "id";
         int value = 10;
@@ -151,8 +173,11 @@ public class Finalframewok {
 
         Map<String,Integer> map = new HashMap<String, Integer>();
         map.put(key,value);
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
         Response response = restUtils.getId(url,map);
         //system.out.println(response.body().asString());
         response.prettyPrint();
+        response.asString();
     }
 }

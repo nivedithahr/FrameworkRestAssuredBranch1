@@ -1,5 +1,6 @@
 package com.automation.restutils;
 
+import com.google.gson.Gson;
 import com.workspacePayload.pojo.Workspace;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -33,6 +34,7 @@ public class RestUtils {
                 //.param(key,id)
                 queryParams(map)
                 .log().all().get(url);
+
     }
     public  Response getId(String url , Map<String, Integer> map)
     {
@@ -50,8 +52,9 @@ public class RestUtils {
         return given(requestSpecification).body(file).
 
                 log().all().
-                post(url);
+                put(url);
     }
+
 
 
 }
